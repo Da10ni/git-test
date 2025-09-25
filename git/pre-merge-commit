@@ -1,0 +1,23 @@
+#!/bin/sh
+# pre-merge-commit hook - Block merges in feature/* and release/* branches
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+echo "🔍 Merge attempt detected on: $current_branch"
+
+# Block merges in feature and release branches
+case "$current_branch" in
+    feature/*|release/*)
+        echo "❌ Merge commits not allowed in $current_branch!"
+        echo ""
+        echo "🔧 Instead use:"
+        echo "   git rebase <parent-branch>    # Rebase your changes"
+        echo "   git rebase -i HEAD~n          # Interactive rebase/squash"
+        echo ""
+        echo "💡 This keeps git history clean and linear"
+        exit 1
+        ;;
+    *)
+        echo "✅ Merge allowed in $current_branch"
+        ;;
+esac
